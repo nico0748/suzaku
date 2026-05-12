@@ -1,0 +1,19 @@
+id: proto_pollution
+name: Prototype Pollution
+description: |
+  JavaScript の deep merge / defaultsDeep が __proto__ や constructor.prototype
+  キーを受理すると、グローバル Object.prototype が汚染される。
+cwe: CWE-1321
+severity: high
+patterns:
+  - language: javascript
+    grep: '_\.(merge|mergeWith|defaultsDeep|set)\s*\('
+  - language: javascript
+    grep: '\bObject\.assign\s*\([^,)]+,\s*JSON\.parse'
+  - language: javascript
+    grep: '\["?__proto__"?\]\s*='
+  - language: javascript
+    grep: 'function\s+\w*merge\w*\s*\([^)]*\)\s*\{[^}]*for\s*\([^)]*in'
+references:
+  - https://github.com/HoLyVieR/prototype-pollution-nsec18
+  - https://learn.snyk.io/lesson/prototype-pollution/

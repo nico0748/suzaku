@@ -1,0 +1,20 @@
+id: zip_slip
+name: Zip Slip (archive extraction path traversal)
+description: |
+  アーカイブ展開時にエントリ名の "../" を正規化しないと、展開先ディレクトリ
+  外にファイルが書き出される。zip/tar/jar/war/cpio/apk/rar/7z 全般に該当。
+cwe: CWE-22
+severity: high
+patterns:
+  - language: python
+    grep: '\.extract(?:all)?\s*\('
+    must_not_contain: 'realpath|abspath|os\.path\.normpath'
+  - language: javascript
+    grep: '\.(extract|extractAllTo)\s*\(|adm-zip'
+    must_not_contain: 'path\.normalize|path\.resolve|path\.join.*replace'
+  - language: java
+    grep: 'ZipEntry\s*\.\s*getName\s*\('
+    must_not_contain: 'startsWith\(.*destDir|canonicalPath'
+references:
+  - https://snyk.io/research/zip-slip-vulnerability
+  - https://cwe.mitre.org/data/definitions/22.html

@@ -1,0 +1,20 @@
+id: danger_funcs_java
+name: Java dangerous functions
+description: |
+  Java のデシリアライズ / JNDI / コマンド実行 / XXE の典型起点。
+  Log4Shell の根本も JNDI lookup にある。
+cwe: CWE-502
+severity: high
+patterns:
+  - language: java
+    grep: '\.readObject\s*\('
+  - language: java
+    grep: '\bContext\s*\.\s*lookup\s*\('
+  - language: java
+    grep: '\bRuntime\.getRuntime\(\)\.exec\s*\('
+  - language: java
+    grep: '\bDocumentBuilder(Factory)?\b'
+    must_not_contain: 'setFeature.*disallow-doctype-decl|XMLConstants\.FEATURE_SECURE_PROCESSING'
+references:
+  - https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+  - https://cwe.mitre.org/data/definitions/502.html

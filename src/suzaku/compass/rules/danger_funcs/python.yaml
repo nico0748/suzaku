@@ -1,0 +1,29 @@
+id: danger_funcs_python
+name: Python dangerous functions
+description: |
+  Python のシリアライゼーション・コマンド実行・XML パーサで典型的に
+  危険な関数。yaml.load (SafeLoader 無し) と pickle.loads は特に致命的。
+cwe: CWE-502
+severity: high
+patterns:
+  - language: python
+    grep: '\b(?:cPickle\.|pickle\.)loads?\s*\('
+  - language: python
+    grep: '\byaml\.load\s*\('
+    must_not_contain: 'SafeLoader|safe_load'
+  - language: python
+    grep: 'subprocess\.[A-Za-z_]+\([^)]*shell\s*=\s*True'
+  - language: python
+    grep: '\bos\.system\s*\('
+  - language: python
+    grep: '(?<![A-Za-z_0-9])eval\s*\('
+  - language: python
+    grep: '(?<![A-Za-z_0-9])exec\s*\('
+  - language: python
+    grep: '\bmarshal\.loads?\s*\('
+  - language: python
+    grep: 'xml\.etree\.ElementTree'
+    must_not_contain: 'defusedxml'
+references:
+  - https://docs.python.org/3/library/pickle.html#restricting-globals
+  - https://owasp.org/www-community/vulnerabilities/Deserialization_of_untrusted_data

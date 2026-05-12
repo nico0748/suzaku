@@ -1,0 +1,20 @@
+id: danger_funcs_go
+name: Go dangerous functions
+description: |
+  Go の典型的な危険関数。shell 引数組み立て / template への HTML 直挿入 /
+  gob デコードの未信頼入力。
+cwe: CWE-78
+severity: high
+patterns:
+  - language: go
+    grep: 'exec\.Command\s*\(\s*"(?:sh|bash|cmd)"\s*,\s*"-c"'
+  - language: go
+    grep: 'filepath\.Join\s*\([^)]*\)'
+    must_not_contain: 'filepath\.Clean|strings\.Contains.*"\.\."|HasPrefix'
+  - language: go
+    grep: 'template\.HTML\s*\('
+  - language: go
+    grep: 'encoding/gob\.NewDecoder|gob\.Decode'
+references:
+  - https://pkg.go.dev/encoding/gob#hdr-Security
+  - https://owasp.org/www-community/attacks/Code_Injection

@@ -1,0 +1,24 @@
+id: ssrf
+name: SSRF (cloud metadata, gopher, IP-notation bypass)
+description: |
+  SSRF の典型: クラウドメタデータ IP、gopher/file/dict スキーム、
+  IP 表記バイパス (8/10/16 進, decimal, IPv4-mapped IPv6) を blacklist
+  実装が見落とすケース。
+cwe: CWE-918
+severity: high
+patterns:
+  - language: any
+    grep: '169\.254\.169\.254|metadata\.google\.internal|metadata\.azure\.com'
+  - language: any
+    grep: '\bgopher://|\bdict://|\bfile://'
+  - language: any
+    grep: '\b0177\.|\b0x[0-9a-fA-F]{6,8}\b|\b2130706433\b'
+  - language: any
+    grep: 'urllib\.request\.urlopen\s*\([^)]*request\.|requests\.[a-z]+\s*\([^)]*request\.'
+    must_not_contain: 'allowed_hosts|verify_host|ipaddress\.ip_address'
+  - language: any
+    grep: '\bfetch\s*\([^)]*req(?:\.body|\.query|\.params)'
+    must_not_contain: 'URL\(.*allowlist|validateUrl|isAllowedHost'
+references:
+  - https://owasp.org/www-community/attacks/Server_Side_Request_Forgery
+  - https://portswigger.net/web-security/ssrf
