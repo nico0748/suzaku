@@ -209,7 +209,38 @@ suzaku reader read /path/to/repo --model qwen2.5-coder:7b  # モデル指定
 - 報告メールに脅迫的表現を生成しないよう Hypothesis のプロンプトで明示
 
 詳細仕様: [`SPEC-phase2-reader-core.md`](./SPEC-phase2-reader-core.md)
-将来計画 (LoRA fine-tuning): [`SPEC-phase2-reader-finetune.md`](./SPEC-phase2-reader-finetune.md)
+
+### Reader Fine-tuning Pipeline (Phase 2-A2)
+
+ローカル GPU 環境向けの LoRA SFT パイプライン。実学習は外部スクリプト
+(Unsloth 想定) を呼び、本ツールはデータセット構築・コマンド組み立て・
+GGUF 変換・Modelfile 生成・評価のラッパを提供する。
+
+```bash
+# 1. データセット構築 (公開 Finding のみ、PII は redact)
+suzaku reader finetune build-dataset findings.jsonl --out ./data/reader-sft.jsonl
+
+# 2. 学習 (まず --dry-run でコマンドを確認 → GPU 環境で本実行)
+suzaku reader finetune train ./data/reader-sft.jsonl \
+    --output ./reader/finetuned/run-001 --epochs 3 --dry-run
+
+# 3. GGUF 変換 + Ollama 登録 (要 llama.cpp / ollama)
+suzaku reader finetune export ./reader/finetuned/run-001 \
+    --tag suzaku-reader-coder:14b --register
+
+# 4. 評価
+suzaku reader finetune eval ./data/reader-eval.jsonl \
+    --model suzaku-reader-coder:14b --per-sample --out ./eval-001.json
+```
+
+安全要件 (機械的にガード):
+- `Finding.state != "published"` は **学習データから機械除外**
+- 禁止フレーズ (`FORBIDDEN_PHRASES`) 12 種を含むサンプルも除外
+- メールアドレス / 電話番号 / JWT 風文字列を `<REDACTED_*>` に置換
+- データセットの SHA-256 を `BuildStats.dataset_sha256` に記録 (証跡用)
+- 評価では CWE Top-1/Top-3 / JSON 準拠率 / ハルシネーション率 / **禁止語混入率 (0 必須)** を測定
+
+詳細仕様: [`SPEC-phase2-reader-finetune.md`](./SPEC-phase2-reader-finetune.md)
 
 ## モジュール別リファレンス
 
