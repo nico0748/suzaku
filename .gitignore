@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Secrets & local config
+.env
+.env.local
+*.pem
+*.key
+secrets.yaml
+
+# Local data
+*.db
+*.sqlite3
+pocs/
+evidence/
+.suzaku/
+
+# OS
+.DS_Store
+Thumbs.db
