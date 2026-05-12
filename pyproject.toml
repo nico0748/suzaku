@@ -73,7 +73,7 @@ namespace_packages = true
 explicit_package_bases = true
 
 [[tool.mypy.overrides]]
-module = ["notion_client.*", "github.*"]
+module = ["notion_client.*", "github.*", "unsloth", "unsloth.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

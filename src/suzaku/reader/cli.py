@@ -8,6 +8,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from suzaku.reader.finetune.cli import app as finetune_app
 from suzaku.reader.ollama import (
     DEFAULT_BASE_URL,
     DEFAULT_MODEL,
@@ -29,6 +30,7 @@ app = typer.Typer(
     help="読眼 (Reader) — ローカル LLM (Ollama) によるコード読解 (Phase 2-A1)",
     no_args_is_help=True,
 )
+app.add_typer(finetune_app, name="finetune")
 console = Console()
 
 

@@ -105,13 +105,20 @@ src/suzaku/
 │   ├── cli.py            # suzaku mcp serve / list-tools
 │   ├── tools.py          # 純粋関数群 (MCP SDK 非依存、ro=17 + rw=4 ツール)
 │   └── server.py         # mcp.server.Server ラッパー (stdio)
-└── reader/               # Phase 2-A1: Reader (ローカル LLM コード読解)
-    ├── cli.py            # suzaku reader check / list-models / read
+└── reader/               # Phase 2-A1/A2: Reader (ローカル LLM コード読解 + fine-tune)
+    ├── cli.py            # suzaku reader check / list-models / read / finetune
     ├── ollama.py         # Ollama HTTP client (Witness Guard 組込)
     ├── models.py         # Pydantic 出力モデル (RepoOverview / Entrypoint / TrustBoundary / Hypothesis)
     ├── repo_summary.py   # リポジトリ抜粋 (head N 行) ヘルパ
     ├── stages.py         # 4 stage 純粋関数 + JSON Schema 検証
-    └── data/prompts/     # Jinja2 (overview / entrypoints / trust_boundaries / hypotheses)
+    ├── data/prompts/     # Jinja2 (overview / entrypoints / trust_boundaries / hypotheses)
+    └── finetune/         # Phase 2-A2: LoRA SFT pipeline
+        ├── cli.py        # suzaku reader finetune <subcommand>
+        ├── dataset.py    # PUBLISHED Finding 抽出 + 禁止語除外 + PII redact + SHA-256
+        ├── train.py      # Unsloth LoRA トレーナのラッパー (subprocess)
+        ├── export.py     # HF -> GGUF -> Modelfile -> ollama create
+        ├── eval.py       # CWE Top-1/3 / parse_rate / hallucination / 禁止語率
+        └── data/         # system_prompt.txt + modelfile.j2
 ```
 
 ## 安全機構の二重防御

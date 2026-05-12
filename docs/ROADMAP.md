@@ -40,13 +40,20 @@ LLM 支援によるリポジトリ要約・脆弱性仮説生成 (Phase 2-A1):
 
 詳細: [`SPEC-phase2-reader-core.md`](./SPEC-phase2-reader-core.md)
 
-### Reader Fine-tuning (Phase 2-A2 / 将来)
+### Reader Fine-tuning Pipeline ✅ Phase 2-A2 完了
 
 `qwen2.5-coder:14b` を Suzaku の脆弱性検出用途に LoRA で軽量 fine-tune し、
-GGUF 化して Ollama に登録する。詳細仕様は
-[`SPEC-phase2-reader-finetune.md`](./SPEC-phase2-reader-finetune.md) を参照。
-データ流出防止のため、未公開 Finding (`state != PUBLISHED`) は学習データから
-完全除外する。実装は別 PR。
+GGUF 化して Ollama に登録するためのラッパー一式:
+
+- ✅ データセット構築: PUBLISHED Finding のみ + 禁止語除外 + PII redact + SHA-256
+- ✅ 学習: Unsloth 呼出のコマンド組み立て + `--dry-run` で安全試運転
+- ✅ エクスポート: llama.cpp 経由 GGUF + Modelfile + `ollama create`
+- ✅ 評価: CWE Top-1/3 / parse rate / hallucinated path rate / **禁止語率 (0 必須)**
+
+実 GPU 学習は外部スクリプト想定。本ツールはあくまでラッパで、安全要件
+(未公開データ流出防止) を機械的に強制する。
+
+詳細: [`SPEC-phase2-reader-finetune.md`](./SPEC-phase2-reader-finetune.md)
 
 ### ④ Lineage (継) — Variant Analysis
 
