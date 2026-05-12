@@ -88,11 +88,15 @@ src/suzaku/
 │   ├── cli.py
 │   ├── cvss.py           # CVSS v3.1 Base Score
 │   ├── checklist.py      # 5 点セット欠落検査
-│   ├── ghsa.py           # Advisory -> GHSA Markdown
+│   ├── ghsa.py           # Advisory -> GHSA Markdown (legacy alias)
 │   ├── email_tmpl.py     # 報告メール + 禁止語ガード
+│   ├── routes.py         # Phase 2-D: 8 ルートディスパッチャ
 │   └── data/
 │       ├── cwe.json
-│       └── templates/{ghsa.md.j2, email.txt.j2}
+│       ├── routes.yaml   # Phase 2-D: ルートメタ
+│       └── templates/    # ghsa / email / mitre_cna_lr / huntr /
+│                         # jpcert / wordfence / patchstack /
+│                         # hackerone / bugcrowd
 └── chronicle/            # ⑧ 歴記
     ├── cli.py
     ├── timeline.py       # Day 0..90 マイルストーン

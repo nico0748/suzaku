@@ -46,11 +46,14 @@ LLM 支援によるリポジトリ要約・脆弱性仮説生成:
 - 修正前 AST 形を Semgrep autofix pattern に変換
 - Sentinel 出力済みのリポジトリ集合に対して横展開検索
 
-### Herald — 追加申請ルート
+### Herald — 追加申請ルート ✅ (Phase 2-D 完了)
 
-- MITRE CNA-LR 直接ルート (CVE 採番)
-- huntr.dev / Wordfence / Patchstack の自動下書き
-- JPCERT/CC 報告フォーム (日本語)
+- ✅ MITRE CNA-LR 直接ルート (Vendor Contact Timeline 必須)
+- ✅ huntr.dev (package + ecosystem 必須)
+- ✅ JPCERT/CC 報告フォーム (日本語テンプレ)
+- ✅ Wordfence / Patchstack (plugin slug 必須)
+- ✅ HackerOne / Bugcrowd (program_handle 必須)
+- 詳細仕様: [`SPEC-phase2-herald-routes.md`](./SPEC-phase2-herald-routes.md)
 
 ### Chronicle — Notion DB 同期
 

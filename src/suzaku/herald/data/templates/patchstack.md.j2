@@ -1,0 +1,38 @@
+# Patchstack Database Submission
+
+## Plugin / Theme
+- Slug: `{{ wp_plugin_slug }}`
+- Vendor: {{ vendor }}
+- Affected versions: `{{ affected_versions }}`
+- Fixed version: `{{ fixed_version | default("(pending)", true) }}`
+
+## Researcher
+- Name: {{ reporter_name }}
+- Contact: {{ reporter_contact }}
+
+## Vulnerability
+- CWE: [{{ cwe }}](https://cwe.mitre.org/data/definitions/{{ cwe_number }}.html) — {{ cwe_name }}
+- CVSS v3.1: **{{ cvss_score }} / {{ severity_label }}**
+- Vector: `{{ cvss_vector }}`
+- Tested commit: `{{ commit_sha[:7] }}`
+
+## Summary
+{{ summary }}
+
+## Reproduction
+{% for step in steps -%}
+{{ loop.index }}. {{ step }}
+{% endfor %}
+
+Reproduction harness: `{{ reproduction_steps_path }}` (Docker compose).
+
+## Impact
+{{ impact_description }}
+
+## Suggested Mitigation
+{{ mitigation }}
+
+## References
+{% for url in references -%}
+- {{ url }}
+{% endfor %}

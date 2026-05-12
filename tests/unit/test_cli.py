@@ -174,6 +174,69 @@ class TestSentinelCli:
         assert "example/x" in result.stdout
 
 
+class TestHeraldRoutesCli:
+    """Phase 2-D で追加された herald submit / list-routes のテスト。"""
+
+    def _write_advisory(self, tmp_path: Path) -> Path:
+        adv = {
+            "submission": {
+                "product_name": "example-app",
+                "vendor": "Example Inc.",
+                "affected_versions": ">=1.0.0,<1.2.3",
+                "cwe": "CWE-22",
+                "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "reproduction_steps_path": "./pocs/F-001/steps.md",
+                "reference_urls": ["https://github.com/example/x/commit/abc"],
+            },
+            "summary": "Zip Slip",
+            "impact_description": "An attacker who can upload archives ...",
+            "mitigation": "realpath validation",
+            "steps": ["Send zip", "Trigger import"],
+            "tested_version": "1.2.2",
+            "commit_sha": "deadbeefcafe",
+            "fixed_version": "1.2.3",
+        }
+        p = tmp_path / "advisory.json"
+        p.write_text(json.dumps(adv))
+        return p
+
+    def test_list_routes_returns_zero(self) -> None:
+        result = runner.invoke(app, ["herald", "list-routes"])
+        assert result.exit_code == 0
+        assert "ghsa" in result.stdout
+        assert "mitre" in result.stdout
+
+    def test_submit_ghsa(self, tmp_path: Path) -> None:
+        adv = self._write_advisory(tmp_path)
+        result = runner.invoke(app, ["herald", "submit", "ghsa", str(adv)])
+        assert result.exit_code == 0
+        assert "## Summary" in result.stdout
+
+    def test_submit_huntr_with_context(self, tmp_path: Path) -> None:
+        adv = self._write_advisory(tmp_path)
+        ctx = tmp_path / "ctx.json"
+        ctx.write_text(
+            json.dumps({"huntr_package_name": "x", "huntr_package_ecosystem": "npm"})
+        )
+        result = runner.invoke(
+            app, ["herald", "submit", "huntr", str(adv), "--context", str(ctx)]
+        )
+        assert result.exit_code == 0
+        assert "huntr.dev" in result.stdout
+
+    def test_submit_mitre_requires_contact_history(self, tmp_path: Path) -> None:
+        adv = self._write_advisory(tmp_path)
+        # context 無しは MITRE で必須欠落 -> exit 1
+        result = runner.invoke(app, ["herald", "submit", "mitre", str(adv)])
+        assert result.exit_code == 1
+        assert "vendor_contact_attempts" in result.stdout
+
+    def test_submit_unknown_route(self, tmp_path: Path) -> None:
+        adv = self._write_advisory(tmp_path)
+        result = runner.invoke(app, ["herald", "submit", "unknown", str(adv)])
+        assert result.exit_code == 2
+
+
 @pytest.fixture(autouse=True)
 def _no_color(monkeypatch: pytest.MonkeyPatch) -> None:
     """rich の色付けはテスト出力比較で邪魔なので無効化。"""

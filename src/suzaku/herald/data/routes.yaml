@@ -1,0 +1,56 @@
+# Suzaku Herald — 申請ルートのメタ情報
+# テンプレートは herald/data/templates/<id>.{md|txt}.j2 を参照する。
+
+routes:
+  ghsa:
+    name: "GitHub Security Advisory"
+    submit_url: "https://github.com/<owner>/<repo>/security/advisories/new"
+    note: "Default route for OSS hosted on GitHub."
+    template: "ghsa.md.j2"
+
+  mitre:
+    name: "MITRE CNA-LR (CVE direct)"
+    submit_url: "https://cveform.mitre.org/"
+    note: "Use when vendor has not responded for 60+ days (per Chronicle)."
+    template: "mitre_cna_lr.md.j2"
+    requires_contact_timeline: true
+
+  huntr:
+    name: "huntr.dev"
+    submit_url: "https://huntr.com/bounties/new"
+    note: "OSS bug bounty platform. Requires repository URL and ecosystem."
+    template: "huntr.md.j2"
+    requires_repo_url: true
+
+  jpcert:
+    name: "JPCERT/CC"
+    submit_url: "https://www.jpcert.or.jp/form/"
+    note: "Japanese coordination center."
+    template: "jpcert.txt.j2"
+    language: "ja"
+
+  wordfence:
+    name: "Wordfence Threat Intel"
+    submit_url: "https://www.wordfence.com/threat-intel/vulnerabilities/submit"
+    note: "WordPress plugin/theme specific."
+    template: "wordfence.md.j2"
+    ecosystem: "wordpress"
+
+  patchstack:
+    name: "Patchstack Alliance"
+    submit_url: "https://patchstack.com/database/submit"
+    note: "WordPress plugin/theme specific."
+    template: "patchstack.md.j2"
+    ecosystem: "wordpress"
+
+  hackerone:
+    name: "HackerOne"
+    submit_url: "https://hackerone.com/reports/new"
+    note: "Use when target maintains a HackerOne VDP/program."
+    template: "hackerone.md.j2"
+
+  bugcrowd:
+    name: "Bugcrowd"
+    submit_url: "https://bugcrowd.com/submissions/new"
+    note: "Use when target maintains a Bugcrowd VDP/program."
+    template: "bugcrowd.md.j2"

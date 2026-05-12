@@ -1,0 +1,50 @@
+# CVE Request — MITRE CNA-LR (Last Resort)
+
+## Reporter
+- Name: {{ reporter_name }}
+- Contact: {{ reporter_contact }}
+
+## Affected Product
+- Vendor: **{{ vendor }}**
+- Product: **{{ product_name }}**
+- Affected versions: `{{ affected_versions }}`
+- Fixed version: `{{ fixed_version | default("(none — vendor unresponsive)", true) }}`
+- Tested commit: `{{ commit_sha[:7] }}` (version `{{ tested_version }}`)
+
+## Vulnerability
+- CWE: [{{ cwe }}](https://cwe.mitre.org/data/definitions/{{ cwe_number }}.html) — {{ cwe_name }}
+- CVSS v3.1: **{{ cvss_score }} / {{ severity_label }}**
+- Vector: `{{ cvss_vector }}`
+
+### Summary
+{{ summary }}
+
+### Impact
+{{ impact_description }}
+
+## Reproduction
+{% for step in steps -%}
+{{ loop.index }}. {{ step }}
+{% endfor %}
+
+Full PoC harness: `{{ reproduction_steps_path }}` (Docker compose).
+
+## Vendor Contact Timeline (CNA-LR justification)
+
+The vendor was contacted via the following channels. CNA-LR is requested
+because no actionable response was received within the coordinated
+disclosure window.
+
+| Date (UTC) | Channel | Response |
+|---|---|---|
+{% for attempt in vendor_contact_attempts -%}
+| {{ attempt.attempted_at.strftime('%Y-%m-%d') }} | {{ attempt.channel }} | {{ attempt.response }}{% if attempt.note %} — {{ attempt.note }}{% endif %} |
+{% endfor %}
+
+## Suggested Mitigation
+{{ mitigation }}
+
+## References
+{% for url in references -%}
+- {{ url }}
+{% endfor %}

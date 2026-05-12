@@ -1,0 +1,37 @@
+# Bugcrowd Submission
+
+## Program / Target
+- Program: **{{ program_handle }}**
+- Target: `{{ asset_identifier | default(target_url, true) }}`
+
+## Title
+{{ summary }}
+
+## Description
+- CWE: [{{ cwe }}](https://cwe.mitre.org/data/definitions/{{ cwe_number }}.html) — {{ cwe_name }}
+- CVSS v3.1: **{{ cvss_score }} / {{ severity_label }}**
+- Vector: `{{ cvss_vector }}`
+- Affected versions: `{{ affected_versions }}`
+- Tested commit: `{{ commit_sha[:7] }}`
+
+{{ impact_description }}
+
+## Steps to Reproduce
+{% for step in steps -%}
+{{ loop.index }}. {{ step }}
+{% endfor %}
+
+Local PoC harness available at: `{{ reproduction_steps_path }}` (Docker compose, no production endpoints touched).
+
+## Impact / Business Risk
+{{ impact_description }}
+
+## Suggested Fix
+{{ mitigation }}
+
+## References
+{% for url in references -%}
+- {{ url }}
+{% endfor %}
+
+Reported by {{ reporter_name }}.
