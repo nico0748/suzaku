@@ -1,0 +1,52 @@
+# Suzaku Sentinel — 8 シグナル評価の重みとキーワード
+#
+# 各シグナルは 0.0-1.0 のスコアを返し、weights に従って加重平均される。
+# 最終スコアは 0.0-10.0 にスケールされる。
+
+weights:
+  maintenance_inactivity: 1.5     # 直近 Issue 応答日数 > 30 日 で高
+  thin_auth_layer: 1.5            # routes 数に対する認証 middleware 比率
+  recent_complex_features: 1.2    # 直近30日に importer/uploader/SSO 系コミット
+  fresh_release: 1.0              # 直近7日内のリリース
+  multi_tier: 1.0                 # docker-compose サービス数
+  many_deps: 0.8                  # 50超で 1.0
+  roll_your_own: 1.5              # 自前 crypto / parser / tokenizer 比率
+  monetary: 1.2                   # payment / subscription / coupon
+
+keywords:
+  monetary:
+    - payment
+    - subscription
+    - coupon
+    - billing
+    - stripe
+    - paypal
+    - invoice
+  complex_features:
+    - upload
+    - importer
+    - import
+    - export
+    - sso
+    - oauth
+    - saml
+    - i18n
+    - webhook
+  roll_your_own:
+    - crypto
+    - jwt
+    - parser
+    - tokenizer
+    - encoder
+    - serializer
+    - sanitizer
+
+# 各シグナルの正規化しきい値 (この値で 1.0 に達する)
+thresholds:
+  issue_response_days_max: 30        # 30 日経過で 1.0
+  recent_complex_feature_commits_max: 5
+  docker_compose_services_max: 3
+  dependency_count_max: 50
+  roll_your_own_dirs_max: 3
+  monetary_hits_max: 3
+  fresh_release_window_days: 7
