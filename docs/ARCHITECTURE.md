@@ -97,10 +97,14 @@ src/suzaku/
 │       └── templates/    # ghsa / email / mitre_cna_lr / huntr /
 │                         # jpcert / wordfence / patchstack /
 │                         # hackerone / bugcrowd
-└── chronicle/            # ⑧ 歴記
-    ├── cli.py
-    ├── timeline.py       # Day 0..90 マイルストーン
-    └── escalation.py     # アラート判定 + ACCSViolationError
+├── chronicle/            # ⑧ 歴記
+│   ├── cli.py
+│   ├── timeline.py       # Day 0..90 マイルストーン
+│   └── escalation.py     # アラート判定 + ACCSViolationError
+└── mcp/                  # Phase 2-B: MCP server (Claude Code/Desktop 連携)
+    ├── cli.py            # suzaku mcp serve / list-tools
+    ├── tools.py          # 純粋関数群 (MCP SDK 非依存、ro=14 + rw=4 ツール)
+    └── server.py         # mcp.server.Server ラッパー (stdio)
 ```
 
 ## 安全機構の二重防御
