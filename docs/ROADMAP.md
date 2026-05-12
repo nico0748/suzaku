@@ -26,17 +26,27 @@
 
 ## Phase 2 (中期構想)
 
-### ② Reader (読眼) — コード読解 4 段階
+### ② Reader (読眼) — コード読解 4 段階 ✅ Phase 2-A1 完了
 
-LLM 支援によるリポジトリ要約・脆弱性仮説生成:
+LLM 支援によるリポジトリ要約・脆弱性仮説生成 (Phase 2-A1):
 
-1. **概観**: ディレクトリ構造 + 主要技術スタックの自動要約
-2. **入口の特定**: HTTP route / CLI / IPC を列挙
-3. **信頼境界の追跡**: 入力 → sink のデータフローを文章化
-4. **仮説生成**: 各 sink で発火しうる CWE トップ 3 を列挙
+1. ✅ **概観**: ディレクトリ構造 + 主要技術スタックの自動要約
+2. ✅ **入口の特定**: HTTP route / CLI / IPC / RPC / WS / queue を列挙
+3. ✅ **信頼境界の追跡**: 入力 → sink のデータフローを文章化
+4. ✅ **仮説生成**: 各 sink で発火しうる CWE トップ 3 (allow-list 検証付き)
 
-実装案: `reader/cli.py` + `reader/llm_client.py` (`anthropic` SDK 経由)。
-推奨モデル: Claude Sonnet 4.6 / Opus 4.7 (knowledge cutoff: 2026-01)。
+実装: Ollama 経由ローカル LLM (既定: `qwen2.5-coder:14b`)。Witness Guard で
+クラウドホストを完全遮断し、未公開脆弱性候補コードを外部に流出させない。
+
+詳細: [`SPEC-phase2-reader-core.md`](./SPEC-phase2-reader-core.md)
+
+### Reader Fine-tuning (Phase 2-A2 / 将来)
+
+`qwen2.5-coder:14b` を Suzaku の脆弱性検出用途に LoRA で軽量 fine-tune し、
+GGUF 化して Ollama に登録する。詳細仕様は
+[`SPEC-phase2-reader-finetune.md`](./SPEC-phase2-reader-finetune.md) を参照。
+データ流出防止のため、未公開 Finding (`state != PUBLISHED`) は学習データから
+完全除外する。実装は別 PR。
 
 ### ④ Lineage (継) — Variant Analysis
 

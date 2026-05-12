@@ -39,8 +39,9 @@ from suzaku.mcp.tools import (
 
 
 class TestToolRegistry:
-    def test_ro_has_14_tools(self) -> None:
-        assert len(RO_TOOLS) == 14
+    def test_ro_has_17_tools(self) -> None:
+        # 14 base + 3 reader (Phase 2-A1)
+        assert len(RO_TOOLS) == 17
 
     def test_rw_has_4_tools(self) -> None:
         assert len(RW_TOOLS) == 4
