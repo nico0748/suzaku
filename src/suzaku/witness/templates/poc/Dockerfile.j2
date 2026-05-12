@@ -1,0 +1,17 @@
+FROM {{ base_image | default("alpine:3.20") }}
+
+LABEL org.suzaku.finding_id="{{ finding_id }}"
+LABEL org.suzaku.purpose="vulnerability-poc"
+
+{% if extra_packages %}
+RUN apk add --no-cache {{ extra_packages | join(" ") }}
+{% endif %}
+
+WORKDIR /poc
+COPY . /poc/
+
+{% if entrypoint %}
+ENTRYPOINT {{ entrypoint }}
+{% else %}
+CMD ["sh", "-c", "echo 'Suzaku PoC container ready'; tail -f /dev/null"]
+{% endif %}

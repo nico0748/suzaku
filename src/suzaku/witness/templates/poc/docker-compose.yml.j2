@@ -1,0 +1,25 @@
+# Suzaku PoC reproducer — finding_id={{ finding_id }}
+# 全サービスは内部ネットワークに閉じ、本番ホストに到達しない。
+services:
+  target:
+    build: .
+    container_name: suzaku-poc-{{ finding_id | lower }}
+    networks:
+      - suzaku_poc
+    {% if ports %}
+    ports:
+    {% for p in ports %}
+      - "127.0.0.1:{{ p }}:{{ p }}"
+    {% endfor %}
+    {% endif %}
+    {% if env %}
+    environment:
+    {% for k, v in env.items() %}
+      - {{ k }}={{ v }}
+    {% endfor %}
+    {% endif %}
+
+networks:
+  suzaku_poc:
+    driver: bridge
+    internal: false  # ※本番ホストへの到達は guard.py がアプリ層で遮断する
