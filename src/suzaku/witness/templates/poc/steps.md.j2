@@ -1,0 +1,37 @@
+# PoC Reproduction Steps — {{ finding_id }}
+
+- Category: {{ category | default("(unknown)") }}
+- Target: {{ target_url | default("(local Docker target)") }}
+- Affected version: {{ affected_version | default("(pending)") }}
+- Tested commit: `{{ commit_sha | default("(pending)") }}`
+
+## 1. ビルドと起動
+
+```bash
+docker compose -f docker-compose.yml up --build -d
+```
+
+## 2. 再現手順
+
+{% if steps %}
+{% for step in steps %}
+{{ loop.index }}. {{ step }}
+{% endfor %}
+{% else %}
+1. (steps をここに記載する)
+{% endif %}
+
+## 3. 期待される結果
+
+{{ expected_result | default("(脆弱性が発火することを確認)") }}
+
+## 4. クリーンアップ
+
+```bash
+docker compose down -v
+```
+
+## 注意事項
+
+- このコンテナは本番ドメインに到達しません (Suzaku Witness Guard)。
+- ログは `evidence.lock` に SHA-256 付きで append-only 記録されます。
