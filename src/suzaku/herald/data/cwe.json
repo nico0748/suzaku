@@ -1,0 +1,82 @@
+{
+  "CWE-22": {
+    "name": "Path Traversal",
+    "short": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+    "common_aliases": ["zip-slip", "directory-traversal"]
+  },
+  "CWE-78": {
+    "name": "OS Command Injection",
+    "short": "Improper Neutralization of Special Elements used in an OS Command",
+    "common_aliases": ["os-command-injection"]
+  },
+  "CWE-79": {
+    "name": "Cross-site Scripting",
+    "short": "Improper Neutralization of Input During Web Page Generation",
+    "common_aliases": ["xss", "stored-xss", "reflected-xss", "dom-xss"]
+  },
+  "CWE-89": {
+    "name": "SQL Injection",
+    "short": "Improper Neutralization of Special Elements used in an SQL Command",
+    "common_aliases": ["sqli"]
+  },
+  "CWE-94": {
+    "name": "Code Injection",
+    "short": "Improper Control of Generation of Code",
+    "common_aliases": ["rce", "eval-injection"]
+  },
+  "CWE-287": {
+    "name": "Improper Authentication",
+    "short": "Improper Authentication",
+    "common_aliases": ["auth-bypass", "broken-auth"]
+  },
+  "CWE-352": {
+    "name": "Cross-Site Request Forgery",
+    "short": "Cross-Site Request Forgery (CSRF)",
+    "common_aliases": ["csrf"]
+  },
+  "CWE-434": {
+    "name": "Unrestricted File Upload",
+    "short": "Unrestricted Upload of File with Dangerous Type",
+    "common_aliases": ["arbitrary-file-upload"]
+  },
+  "CWE-502": {
+    "name": "Deserialization of Untrusted Data",
+    "short": "Deserialization of Untrusted Data",
+    "common_aliases": ["unsafe-deserialization", "pickle-injection"]
+  },
+  "CWE-611": {
+    "name": "XML External Entity",
+    "short": "Improper Restriction of XML External Entity Reference",
+    "common_aliases": ["xxe"]
+  },
+  "CWE-732": {
+    "name": "Incorrect Permission Assignment",
+    "short": "Incorrect Permission Assignment for Critical Resource",
+    "common_aliases": []
+  },
+  "CWE-798": {
+    "name": "Hard-coded Credentials",
+    "short": "Use of Hard-coded Credentials",
+    "common_aliases": ["hardcoded-secret"]
+  },
+  "CWE-862": {
+    "name": "Missing Authorization",
+    "short": "Missing Authorization",
+    "common_aliases": ["bola", "idor"]
+  },
+  "CWE-863": {
+    "name": "Incorrect Authorization",
+    "short": "Incorrect Authorization",
+    "common_aliases": ["broken-access-control"]
+  },
+  "CWE-918": {
+    "name": "Server-Side Request Forgery",
+    "short": "Server-Side Request Forgery (SSRF)",
+    "common_aliases": ["ssrf"]
+  },
+  "CWE-1321": {
+    "name": "Prototype Pollution",
+    "short": "Improperly Controlled Modification of Object Prototype Attributes",
+    "common_aliases": ["proto-pollution", "prototype-pollution"]
+  }
+}

@@ -40,6 +40,10 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/suzaku"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"src/suzaku/herald/data" = "suzaku/herald/data"
+"src/suzaku/witness/templates" = "suzaku/witness/templates"
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
