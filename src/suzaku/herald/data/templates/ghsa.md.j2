@@ -1,0 +1,30 @@
+## Summary
+{{ summary }}
+
+## Affected Versions
+- Product: **{{ product_name }}** ({{ vendor }})
+- Affected: `{{ affected_versions }}`
+- Fixed: `{{ fixed_version | default("(pending)", true) }}`
+- Tested on: {{ tested_version }} (commit `{{ commit_sha[:7] }}`)
+
+## Impact
+- CVSS 3.1: **{{ cvss_score }} / {{ severity_label }}**
+- Vector: `{{ cvss_vector }}`
+- CWE: [{{ cwe }}](https://cwe.mitre.org/data/definitions/{{ cwe_number }}.html) — {{ cwe_name }}
+
+{{ impact_description }}
+
+## Reproduction Steps
+{% for step in steps -%}
+{{ loop.index }}. {{ step }}
+{% endfor %}
+
+See `{{ reproduction_steps_path }}` for the full PoC harness (Docker compose).
+
+## Suggested Mitigation
+{{ mitigation }}
+
+## References
+{% for url in references -%}
+- {{ url }}
+{% endfor %}
