@@ -50,6 +50,20 @@ from suzaku.herald.routes import (
 from suzaku.herald.routes import (
     list_routes as herald_list_routes,
 )
+from suzaku.lineage.egress import LineageEgressError
+from suzaku.lineage.extract import hunks_to_rules as lineage_hunks_to_rules
+from suzaku.lineage.models import (
+    CVERecord as LineageCVERecord,
+)
+from suzaku.lineage.models import (
+    PatchHunk as LineagePatchHunk,
+)
+from suzaku.lineage.models import (
+    variant_rule_dump,
+    variant_rule_load,
+)
+from suzaku.lineage.nvd import NVDFilterError
+from suzaku.lineage.scan import scan_with_variant_rules
 from suzaku.models import Route, VendorState
 from suzaku.reader.ollama import (
     DEFAULT_BASE_URL as READER_DEFAULT_OLLAMA_URL,
@@ -98,6 +112,8 @@ RO_TOOLS: tuple[str, ...] = (
     "reader_check",
     "reader_overview",
     "reader_read",
+    "lineage_extract_from_nvd",
+    "lineage_scan",
 )
 
 RW_TOOLS: tuple[str, ...] = (
@@ -302,6 +318,44 @@ TOOL_SPECS: dict[str, ToolSpec] = {
                 "model": _semver_string("Model tag"),
             },
             "required": ["repo_path"],
+        },
+        "ro",
+    ),
+    "lineage_extract_from_nvd": ToolSpec(
+        "lineage_extract_from_nvd",
+        "Extract Suzaku variant rules from an NVD CVE record + commit hunks (offline; no network).",
+        {
+            "type": "object",
+            "properties": {
+                "cve_record": {
+                    "type": "object",
+                    "description": "CVERecord dict (cve_id, cwe, commit_urls, ...).",
+                },
+                "hunks": {
+                    "type": "array",
+                    "description": "Pre-fetched PatchHunk dicts.",
+                    "items": {"type": "object"},
+                },
+                "max_rules": {"type": "integer", "default": 5},
+            },
+            "required": ["cve_record", "hunks"],
+        },
+        "ro",
+    ),
+    "lineage_scan": ToolSpec(
+        "lineage_scan",
+        "Scan a local repo with previously extracted Lineage VariantRule[] (uses ripgrep).",
+        {
+            "type": "object",
+            "properties": {
+                "repo_path": _semver_string("Absolute path to local repo"),
+                "rules": {
+                    "type": "array",
+                    "items": {"type": "object"},
+                    "description": "Array of VariantRule dicts (output of lineage_extract_from_nvd).",
+                },
+            },
+            "required": ["repo_path", "rules"],
         },
         "ro",
     ),
@@ -663,6 +717,29 @@ def t_reader_read(
     return report.model_dump(mode="json")
 
 
+# ────── lineage (ro) ──────
+
+
+def t_lineage_extract_from_nvd(
+    cve_record: dict[str, Any],
+    hunks: list[dict[str, Any]],
+    max_rules: int = 5,
+) -> dict[str, Any]:
+    cve = LineageCVERecord.model_validate(cve_record)
+    patch_hunks = [LineagePatchHunk.model_validate(h) for h in hunks]
+    rules = lineage_hunks_to_rules(cve, patch_hunks, max_rules=max_rules)
+    return {"rules": [variant_rule_dump(r) for r in rules]}
+
+
+def t_lineage_scan(repo_path: str, rules: list[dict[str, Any]]) -> dict[str, Any]:
+    variant_rules = [variant_rule_load(r) for r in rules]
+    findings = scan_with_variant_rules(Path(repo_path), variant_rules)
+    return {
+        "findings": [f.model_dump(mode="json") for f in findings],
+        "count": len(findings),
+    }
+
+
 # ────────────────────────────────────────────────────────────────────
 # Dispatcher
 # ────────────────────────────────────────────────────────────────────
@@ -686,6 +763,8 @@ _DISPATCH: dict[str, Any] = {
     "reader_check": t_reader_check,
     "reader_overview": t_reader_overview,
     "reader_read": t_reader_read,
+    "lineage_extract_from_nvd": t_lineage_extract_from_nvd,
+    "lineage_scan": t_lineage_scan,
     "witness_init": t_witness_init,
     "witness_record": t_witness_record,
     "chronicle_init": t_chronicle_init,
@@ -710,6 +789,8 @@ SUZAKU_ERRORS: tuple[type[Exception], ...] = (
     OllamaUnavailableError,
     OllamaError,
     ReaderParseError,
+    LineageEgressError,
+    NVDFilterError,
     FileNotFoundError,
     ValueError,
 )
