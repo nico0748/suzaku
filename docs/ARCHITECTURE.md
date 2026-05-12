@@ -101,10 +101,17 @@ src/suzaku/
 │   ├── cli.py
 │   ├── timeline.py       # Day 0..90 マイルストーン
 │   └── escalation.py     # アラート判定 + ACCSViolationError
-└── mcp/                  # Phase 2-B: MCP server (Claude Code/Desktop 連携)
-    ├── cli.py            # suzaku mcp serve / list-tools
-    ├── tools.py          # 純粋関数群 (MCP SDK 非依存、ro=14 + rw=4 ツール)
-    └── server.py         # mcp.server.Server ラッパー (stdio)
+├── mcp/                  # Phase 2-B: MCP server (Claude Code/Desktop 連携)
+│   ├── cli.py            # suzaku mcp serve / list-tools
+│   ├── tools.py          # 純粋関数群 (MCP SDK 非依存、ro=17 + rw=4 ツール)
+│   └── server.py         # mcp.server.Server ラッパー (stdio)
+└── reader/               # Phase 2-A1: Reader (ローカル LLM コード読解)
+    ├── cli.py            # suzaku reader check / list-models / read
+    ├── ollama.py         # Ollama HTTP client (Witness Guard 組込)
+    ├── models.py         # Pydantic 出力モデル (RepoOverview / Entrypoint / TrustBoundary / Hypothesis)
+    ├── repo_summary.py   # リポジトリ抜粋 (head N 行) ヘルパ
+    ├── stages.py         # 4 stage 純粋関数 + JSON Schema 検証
+    └── data/prompts/     # Jinja2 (overview / entrypoints / trust_boundaries / hypotheses)
 ```
 
 ## 安全機構の二重防御

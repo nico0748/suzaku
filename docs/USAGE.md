@@ -175,6 +175,42 @@ Claude Desktop の `claude_desktop_config.json` 設定例:
 
 詳細仕様: [`SPEC-phase2-mcp.md`](./SPEC-phase2-mcp.md)。
 
+## Reader — ローカル LLM コード読解 (Phase 2-A1)
+
+Reader は Ollama 経由でローカル LLM を呼び、4 段階のコード読解を行います。**未公開脆弱性候補コードを外部に送らない方針** のため、クラウド LLM は利用しません。
+
+事前準備:
+```bash
+# Ollama を https://ollama.com/ からインストールしてから:
+ollama serve
+ollama pull qwen2.5-coder:14b   # 既定モデル (約 9GB)
+```
+
+CLI:
+```bash
+suzaku reader check                     # 疎通 + 既定モデルの存在チェック
+suzaku reader list-models               # Ollama 登録モデル一覧
+suzaku reader read /path/to/repo                 # 4 段階一気通貫
+suzaku reader read /path/to/repo --stage overview  # 概観のみ
+suzaku reader read /path/to/repo --model qwen2.5-coder:7b  # モデル指定
+```
+
+環境変数: `SUZAKU_OLLAMA_BASE_URL` (既定 `http://localhost:11434`), `SUZAKU_OLLAMA_MODEL` (既定 `qwen2.5-coder:14b`)。
+
+4 段階:
+1. **概観** — リポジトリの tech stack / 主要ディレクトリ / 推定 LOC
+2. **入口の特定** — http_route / cli / ipc / rpc / websocket / queue
+3. **信頼境界の追跡** — 入口 → sink までのデータフロー要約
+4. **仮説生成** — sink ごとに CWE トップ 3 (`herald/data/cwe.json` の許可リストに限定)
+
+ガード:
+- `OllamaClient` は **Witness Guard を必ず経由** — `--ollama-url http://api.openai.com` を渡すと `ProductionAccessError` (exit 4) で停止
+- LLM 出力は Pydantic + JSON Schema で強制検証 — 未知 CWE は除外、JSON 不正は `ReaderParseError` (exit 8)
+- 報告メールに脅迫的表現を生成しないよう Hypothesis のプロンプトで明示
+
+詳細仕様: [`SPEC-phase2-reader-core.md`](./SPEC-phase2-reader-core.md)
+将来計画 (LoRA fine-tuning): [`SPEC-phase2-reader-finetune.md`](./SPEC-phase2-reader-finetune.md)
+
 ## モジュール別リファレンス
 
 ### Sentinel

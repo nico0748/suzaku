@@ -51,6 +51,18 @@ from suzaku.herald.routes import (
     list_routes as herald_list_routes,
 )
 from suzaku.models import Route, VendorState
+from suzaku.reader.ollama import (
+    DEFAULT_BASE_URL as READER_DEFAULT_OLLAMA_URL,
+)
+from suzaku.reader.ollama import (
+    DEFAULT_MODEL as READER_DEFAULT_MODEL,
+)
+from suzaku.reader.ollama import (
+    OllamaClient,
+    OllamaError,
+    OllamaUnavailableError,
+)
+from suzaku.reader.stages import ReaderParseError, read_repo, stage_overview
 from suzaku.sentinel.scoring import (
     DEFAULT_SIGNALS_PATH,
     RepoSignals,
@@ -83,6 +95,9 @@ RO_TOOLS: tuple[str, ...] = (
     "herald_render",
     "chronicle_status",
     "chronicle_list",
+    "reader_check",
+    "reader_overview",
+    "reader_read",
 )
 
 RW_TOOLS: tuple[str, ...] = (
@@ -247,6 +262,46 @@ TOOL_SPECS: dict[str, ToolSpec] = {
             "properties": {
                 "state_dir": _semver_string("Chronicle state dir (default: ./.suzaku/chronicle)"),
             },
+        },
+        "ro",
+    ),
+    "reader_check": ToolSpec(
+        "reader_check",
+        "Check Ollama reachability and whether the configured model is present.",
+        {
+            "type": "object",
+            "properties": {
+                "ollama_url": _semver_string("Ollama base URL (default: http://localhost:11434)"),
+                "model": _semver_string("Model tag (default: qwen2.5-coder:14b)"),
+            },
+        },
+        "ro",
+    ),
+    "reader_overview": ToolSpec(
+        "reader_overview",
+        "Generate a brief overview of a local repo via local Ollama (single LLM call).",
+        {
+            "type": "object",
+            "properties": {
+                "repo_path": _semver_string("Absolute path to local repo"),
+                "ollama_url": _semver_string("Ollama base URL"),
+                "model": _semver_string("Model tag"),
+            },
+            "required": ["repo_path"],
+        },
+        "ro",
+    ),
+    "reader_read": ToolSpec(
+        "reader_read",
+        "Run the full 4-stage Reader pipeline (slow: 30s-several minutes; local LLM only).",
+        {
+            "type": "object",
+            "properties": {
+                "repo_path": _semver_string("Absolute path to local repo"),
+                "ollama_url": _semver_string("Ollama base URL"),
+                "model": _semver_string("Model tag"),
+            },
+            "required": ["repo_path"],
         },
         "ro",
     ),
@@ -570,6 +625,44 @@ def t_chronicle_set_vendor(
     return {"submission_id": submission_id, "vendor_state": state}
 
 
+# ────── reader (ro) ──────
+
+
+def _reader_client(ollama_url: str | None, model: str | None) -> OllamaClient:
+    return OllamaClient(
+        base_url=ollama_url or READER_DEFAULT_OLLAMA_URL,
+        model=model or READER_DEFAULT_MODEL,
+    )
+
+
+def t_reader_check(
+    ollama_url: str | None = None, model: str | None = None
+) -> dict[str, Any]:
+    with _reader_client(ollama_url, model) as client:
+        ok = client.health()
+    return {
+        "ollama_url": ollama_url or READER_DEFAULT_OLLAMA_URL,
+        "model": model or READER_DEFAULT_MODEL,
+        "reachable": ok,
+    }
+
+
+def t_reader_overview(
+    repo_path: str, ollama_url: str | None = None, model: str | None = None
+) -> dict[str, Any]:
+    with _reader_client(ollama_url, model) as client:
+        overview = stage_overview(Path(repo_path), client)
+    return overview.model_dump(mode="json")
+
+
+def t_reader_read(
+    repo_path: str, ollama_url: str | None = None, model: str | None = None
+) -> dict[str, Any]:
+    with _reader_client(ollama_url, model) as client:
+        report = read_repo(Path(repo_path), client)
+    return report.model_dump(mode="json")
+
+
 # ────────────────────────────────────────────────────────────────────
 # Dispatcher
 # ────────────────────────────────────────────────────────────────────
@@ -590,6 +683,9 @@ _DISPATCH: dict[str, Any] = {
     "herald_render": t_herald_render,
     "chronicle_status": t_chronicle_status,
     "chronicle_list": t_chronicle_list,
+    "reader_check": t_reader_check,
+    "reader_overview": t_reader_overview,
+    "reader_read": t_reader_read,
     "witness_init": t_witness_init,
     "witness_record": t_witness_record,
     "chronicle_init": t_chronicle_init,
@@ -611,6 +707,9 @@ SUZAKU_ERRORS: tuple[type[Exception], ...] = (
     CVSSError,
     RuleError,
     RipgrepNotFoundError,
+    OllamaUnavailableError,
+    OllamaError,
+    ReaderParseError,
     FileNotFoundError,
     ValueError,
 )
