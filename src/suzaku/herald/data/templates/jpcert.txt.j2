@@ -1,0 +1,41 @@
+JPCERT/CC 脆弱性関連情報の届出
+
+== 報告者情報 ==
+  氏名/ハンドル: {{ reporter_name }}
+  連絡先:       {{ reporter_contact }}
+  立場:         {{ jpcert_reporter_role }}
+
+== 対象製品 ==
+  ベンダ:         {{ vendor }}
+  製品名:         {{ product_name }}
+  影響を受ける版: {{ affected_versions }}
+  修正済み版:     {{ fixed_version | default("(未修正)", true) }}
+  検証コミット:   {{ commit_sha }} ({{ tested_version }})
+
+== 脆弱性情報 ==
+  CWE:            {{ cwe }} ({{ cwe_name }})
+  CVSS v3.1 Base: {{ cvss_score }} / {{ severity_label }}
+  ベクタ:         {{ cvss_vector }}
+
+== 概要 ==
+{{ summary }}
+
+== 影響 ==
+{{ impact_description }}
+
+== 再現手順 ==
+{% for step in steps -%}
+  {{ loop.index }}. {{ step }}
+{% endfor %}
+
+  詳細な PoC: {{ reproduction_steps_path }} (Docker compose で本番に到達しない構成)
+
+== 推奨対策 ==
+{{ mitigation }}
+
+== 参考 ==
+{% for url in references -%}
+  - {{ url }}
+{% endfor %}
+
+(本届出は Suzaku Herald により生成されました。報酬要求や脅迫的意図は含みません。)

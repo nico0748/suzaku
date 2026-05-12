@@ -158,14 +158,47 @@ suzaku chronicle publish S-001
 | `witness verify <id>` | チェイン検証 | 1 (改ざん検知) |
 | `witness check-host <host>` | ガード単体確認 | 1 (block) |
 
-### Herald (Phase 1 は GHSA のみ)
+### Herald (Phase 2-D で 8 ルート対応)
 
 | Command | 説明 | Exit |
 |---|---|---|
 | `herald cvss <vector>` | CVSS v3.1 スコア | 2 (形式誤り) |
 | `herald checklist <json>` | 5 点セット欠落検査 | 1 (欠落) |
-| `herald ghsa <json>` | GHSA Markdown 生成 | 1 (検証失敗) |
+| `herald ghsa <json>` | GHSA Markdown 生成 (legacy alias) | 1 (検証失敗) |
 | `herald email <json>` | 報告メール生成 | 1 (禁止語) |
+| `herald list-routes` | 同梱 8 ルート一覧 + 申請 URL | |
+| `herald submit <route> <json> [--context ctx.json]` | 各ルート向けテンプレート生成 | 1 (検証失敗) / 2 (未知ルート) |
+
+利用可能なルート (`<route>` 値):
+- `ghsa` — GitHub Security Advisory (デフォルト)
+- `mitre` — MITRE CNA-LR (ベンダ無応答時の CVE 採番)
+- `huntr` — huntr.dev (OSS bug bounty)
+- `jpcert` — JPCERT/CC (国内・日本語)
+- `wordfence` / `patchstack` — WordPress 専用
+- `hackerone` / `bugcrowd` — VDP プラットフォーム
+
+ルート別 `ctx.json` 例:
+
+```jsonc
+// MITRE 用 (vendor_contact_attempts >= 1 が必須)
+{
+  "vendor_contact_attempts": [
+    {"attempted_at": "2026-01-01T00:00:00+00:00", "channel": "email security@", "response": "no_response"},
+    {"attempted_at": "2026-01-14T00:00:00+00:00", "channel": "github_issue #42", "response": "no_response"}
+  ]
+}
+
+// huntr 用
+{"huntr_package_name": "example", "huntr_package_ecosystem": "npm", "huntr_repo_url": "https://github.com/example/x"}
+
+// Wordfence / Patchstack 用
+{"wp_plugin_slug": "example-plugin", "wp_active_installs": 12000}
+
+// HackerOne / Bugcrowd 用
+{"program_handle": "github", "asset_identifier": "api.github.com"}
+```
+
+詳細仕様は [`SPEC-phase2-herald-routes.md`](./SPEC-phase2-herald-routes.md) を参照。
 
 ### Chronicle (ACCS ガード組込)
 
