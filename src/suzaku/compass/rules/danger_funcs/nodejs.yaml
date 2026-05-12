@@ -1,0 +1,25 @@
+id: danger_funcs_nodejs
+name: Node.js dangerous functions
+description: |
+  Node.js の典型的に危険な API。vm モジュール / dynamic require / unsafe
+  merge は prototype pollution や RCE の起点になる。
+cwe: CWE-94
+severity: high
+patterns:
+  - language: javascript
+    grep: '(?<![A-Za-z_$0-9])eval\s*\('
+  - language: javascript
+    grep: '\bnew\s+Function\s*\('
+  - language: javascript
+    grep: '\bvm\.runIn(?:NewContext|ThisContext|Context)\s*\('
+  - language: javascript
+    grep: '_\.(merge|mergeWith|defaultsDeep)\s*\('
+  - language: javascript
+    grep: 'Object\.assign\s*\([^,)]+,'
+  - language: javascript
+    grep: 'child_process\.exec\s*\([^,)]*\+'
+  - language: javascript
+    grep: 'require\s*\(\s*[A-Za-z_$][A-Za-z_$0-9]*\s*\)'
+references:
+  - https://nodejs.org/api/vm.html#vm-executing-javascript
+  - https://owasp.org/www-community/attacks/Code_Injection

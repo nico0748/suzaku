@@ -1,0 +1,25 @@
+id: danger_funcs_php
+name: PHP dangerous functions
+description: |
+  PHP の典型的に危険な関数 (任意コード実行 / SSRF / 任意ファイル include / RCE 等)。
+  ユーザ入力が引数に到達していれば致命的。
+cwe: CWE-94
+severity: high
+patterns:
+  - language: php
+    grep: '\beval\s*\('
+  - language: php
+    grep: '\bassert\s*\(\s*["'']'
+  - language: php
+    grep: '\bunserialize\s*\('
+  - language: php
+    grep: '\binclude(?:_once)?\s*\(?\s*\$_(GET|POST|REQUEST|COOKIE)'
+  - language: php
+    grep: '\bextract\s*\(\s*\$_(POST|GET|REQUEST)'
+  - language: php
+    grep: '\b(system|exec|shell_exec|passthru|popen|proc_open)\s*\('
+  - language: php
+    grep: '\bpreg_replace\s*\([^)]*/e[''"]'
+references:
+  - https://www.php.net/manual/en/function.eval.php
+  - https://owasp.org/www-community/attacks/Code_Injection

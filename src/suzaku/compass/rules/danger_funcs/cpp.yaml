@@ -1,0 +1,22 @@
+id: danger_funcs_cpp
+name: C/C++ dangerous functions
+description: |
+  C/C++ のクラシックなバッファオーバーフロー関数群。境界チェック無しの
+  文字列・メモリコピーは数十年前から CVE 量産の元凶。
+cwe: CWE-120
+severity: high
+patterns:
+  - language: cpp
+    grep: '\bstrcpy\s*\('
+  - language: cpp
+    grep: '\bstrcat\s*\('
+  - language: cpp
+    grep: '\bsprintf\s*\('
+  - language: cpp
+    grep: '\bmemcpy\s*\([^,]+,[^,]+,[^)]+\)'
+  - language: cpp
+    grep: '\bgets\s*\('
+  - language: cpp
+    grep: '\bprintf\s*\(\s*[A-Za-z_][A-Za-z_0-9]*\s*\)'
+references:
+  - https://wiki.sei.cmu.edu/confluence/display/c/STR07-C.+Use+the+bounds-checking+interfaces+for+string+manipulation
