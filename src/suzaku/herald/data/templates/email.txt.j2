@@ -1,0 +1,57 @@
+Subject: [Security] {{ product_name }} — {{ cwe }} ({{ severity_label }} {{ cvss_score }}) — coordinated disclosure request
+
+Dear {{ vendor }} security team,
+
+I am writing to responsibly report a security issue in {{ product_name }}.
+Per ISO/IEC 29147 and CVD best practice, this report is coordinated and not
+publicly disclosed; my goal is to support a fix before any public discussion.
+
+== Summary ==
+{{ summary }}
+
+== Affected ==
+- Product: {{ product_name }} ({{ vendor }})
+- Affected versions: {{ affected_versions }}
+- Tested commit: {{ commit_sha }}
+
+== Impact ==
+- CVSS v3.1 Base Score: {{ cvss_score }} ({{ severity_label }})
+- Vector: {{ cvss_vector }}
+- CWE: {{ cwe }} — {{ cwe_name }}
+
+{{ impact_description }}
+
+== Reproduction ==
+A self-contained PoC is available locally as a Docker compose harness
+(no production endpoints are touched). The high-level steps are:
+
+{% for step in steps -%}
+{{ loop.index }}. {{ step }}
+{% endfor %}
+
+I can share the full PoC artifacts (Dockerfile, docker-compose.yml,
+steps.md, and SHA-256 evidence chain) through a secure channel of your
+choice (PGP, signed GitHub Private Vulnerability Reporting, etc.).
+
+== Suggested Mitigation ==
+{{ mitigation }}
+
+== Disclosure Plan ==
+- Day 0 (today): notification sent to this address.
+- Day 14: I will follow up via another channel if no acknowledgement.
+- Day {{ disclosure_window_days }}: planned public disclosure (per industry
+  90-day norm). I am happy to extend this window if a fix is in progress.
+- After a public fix release, I will wait an additional 30 days before
+  publishing any technical write-up.
+
+This timeline is a default, not an ultimatum. Please let me know if you
+need more time or a different coordination cadence — I will adjust.
+
+== Contact ==
+{{ reporter_contact }}
+
+I do not request or accept payment in exchange for withholding details.
+This report is shared in the interest of users; please treat it as such.
+
+Best regards,
+{{ reporter_name }}
