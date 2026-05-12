@@ -128,6 +128,53 @@ suzaku chronicle publish S-001
 
 `--state-dir` でステート保存先を変更可。デフォルトは `./.suzaku/chronicle/`。
 
+## Claude Code / Claude Desktop から呼ぶ (Phase 2-B MCP)
+
+Suzaku は MCP (Model Context Protocol) サーバとしても動作します。Claude Code / Claude Desktop に登録すると自然言語で各モジュールを呼べます。
+
+```bash
+# stdio トランスポートで起動 (Claude Code/Desktop が prepare して呼び出す)
+suzaku mcp serve --mode ro       # 読み取り専用ツールのみ (推奨)
+suzaku mcp serve --mode rw       # rw ツールも公開 (witness_init / chronicle_init 等)
+
+# 公開されるツール一覧を確認
+suzaku mcp list-tools --mode ro
+suzaku mcp list-tools --mode rw
+```
+
+Claude Desktop の `claude_desktop_config.json` 設定例:
+
+```json
+{
+  "mcpServers": {
+    "suzaku": {
+      "command": "suzaku",
+      "args": ["mcp", "serve", "--mode", "ro"],
+      "env": {
+        "SUZAKU_GITHUB_TOKEN": "ghp_..."
+      }
+    }
+  }
+}
+```
+
+公開されるツール (mode=ro/rw 別):
+
+| Tool | Mode | 説明 |
+|---|---|---|
+| `suzaku_version` | ro | バージョン |
+| `sentinel_list_signals` / `sentinel_score` | ro | 8 シグナル評価 |
+| `compass_list_rules` / `compass_show_rule` / `compass_scan` | ro | ルール一覧 / 単発スキャン |
+| `witness_check_host` / `witness_verify` | ro | ガード判定 / 証跡検証 |
+| `herald_cvss` / `herald_checklist` / `herald_list_routes` / `herald_render` | ro | CVSS 計算 / 8 ルート対応 |
+| `chronicle_status` / `chronicle_list` | ro | 90 日タイムライン |
+| `witness_init` / `witness_record` | rw | PoC 展開 / 証跡記録 |
+| `chronicle_init` / `chronicle_set_vendor` | rw | disclosure 開始 / ベンダ状態更新 |
+
+公開**しない** (Phase 2-B 範囲外、SPEC 参照): `witness_reproduce`, `chronicle_publish`, `sentinel_scan` (実 GitHub API call), `compass_scan --all` 等。
+
+詳細仕様: [`SPEC-phase2-mcp.md`](./SPEC-phase2-mcp.md)。
+
 ## モジュール別リファレンス
 
 ### Sentinel

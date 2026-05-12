@@ -73,11 +73,14 @@ LLM 支援によるリポジトリ要約・脆弱性仮説生成:
 - corpus を `evidence/<finding_id>/corpus/` に保管
 - クラッシュ時は自動で Witness Reproducer の minimization にかける
 
-### MCP サーバとしての提供
+### MCP サーバとしての提供 ✅ (Phase 2-B 完了)
 
-- Suzaku モジュールを Anthropic MCP サーバとして公開
-- Claude Code / Claude Desktop から sentinel / compass / chronicle を直接呼び出し
-- 「このリポをスキャンして」「90 日後を Slack に通知して」等
+- ✅ Suzaku モジュールを Anthropic MCP サーバとして公開 (`suzaku mcp serve`)
+- ✅ Claude Code / Claude Desktop から 14 (ro) / 18 (rw) ツールを呼び出し
+- ✅ stdio トランスポート + `--mode {ro,rw}` 切替
+- ✅ Suzaku 全例外を `isError=True` の TextContent にラップ
+- 詳細仕様: [`SPEC-phase2-mcp.md`](./SPEC-phase2-mcp.md)
+- Phase 3 候補: SSE / streamable HTTP, `chronicle_publish`, `sentinel_scan` の安全な公開
 
 ### TUI / Web ダッシュボード
 
