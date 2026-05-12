@@ -105,6 +105,15 @@ src/suzaku/
 │   ├── cli.py            # suzaku mcp serve / list-tools
 │   ├── tools.py          # 純粋関数群 (MCP SDK 非依存、ro=17 + rw=4 ツール)
 │   └── server.py         # mcp.server.Server ラッパー (stdio)
+├── lineage/              # Phase 2-C: Lineage (CVE variant analysis)
+│   ├── cli.py            # suzaku lineage ingest / extract / scan / demo
+│   ├── egress.py         # LineageEgressGuard (Witness Guard とは独立 allow-list)
+│   ├── nvd.py            # NVD JSON ingest + parse_cve_obj + fetch_nvd
+│   ├── github_patches.py # GitHub commit diff fetch + unified diff parser
+│   ├── extract.py        # 削除行 -> VariantRule + must_not_contain 推定
+│   ├── scan.py           # Compass GrepRunner を用いた横展開検索
+│   ├── models.py         # CVERecord / PatchHunk / VariantRule / VariantFinding
+│   └── data/allowed_hosts.yaml
 └── reader/               # Phase 2-A1/A2: Reader (ローカル LLM コード読解 + fine-tune)
     ├── cli.py            # suzaku reader check / list-models / read / finetune
     ├── ollama.py         # Ollama HTTP client (Witness Guard 組込)

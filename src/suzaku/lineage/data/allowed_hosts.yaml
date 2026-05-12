@@ -1,0 +1,8 @@
+# Suzaku Lineage Egress Guard - 読み取り専用許可ホスト
+#
+# Witness Guard とは独立した allow-list。Lineage の NVD/GitHub fetch
+# のみに適用される。Witness Reproducer のガードは変更しない。
+read_only_egress:
+  - api.github.com
+  - services.nvd.nist.gov
+  - nvd.nist.gov

@@ -242,6 +242,51 @@ suzaku reader finetune eval ./data/reader-eval.jsonl \
 
 詳細仕様: [`SPEC-phase2-reader-finetune.md`](./SPEC-phase2-reader-finetune.md)
 
+## Lineage — Variant Analysis (Phase 2-C)
+
+公開済み CVE の修正パッチから類似パターンを抽出し、Sentinel 候補リポ
+ジトリへ横展開検索する。**未公開 CVE は対象外** (`vulnStatus` 厳格判定)。
+
+```bash
+# 1. NVD JSON 取り込み (オフライン or オンライン)
+suzaku lineage ingest /path/to/cve.json --out cve_record.json
+suzaku lineage ingest --cve CVE-2024-1234 --out cve_record.json  # NVD API
+
+# 2. commit diff から VariantRule を抽出
+suzaku lineage extract cve_record.json --out variant_rules.json
+suzaku lineage extract cve_record.json --offline  # GitHub fetch しない
+
+# 3. 自前リポジトリで横展開検索
+suzaku lineage scan /path/to/repo --rules variant_rules.json --out findings.json
+
+# 4. オフライン demo (内蔵 CVE で 4 stage を試走)
+suzaku lineage demo /path/to/repo
+```
+
+### Lineage Egress Guard
+
+Lineage は読み取り専用の外部 API (NVD / GitHub) を呼ぶ必要があるため、
+**Witness Guard とは独立した allow-list** を `src/suzaku/lineage/data/allowed_hosts.yaml` で管理:
+
+```yaml
+read_only_egress:
+  - api.github.com
+  - services.nvd.nist.gov
+  - nvd.nist.gov
+```
+
+許可外ホスト (`api.openai.com` 等) は `LineageEgressError` (exit 12) で拒否。
+Witness Reproducer のガード (本番アクセス遮断) は変更されません。
+
+### 安全要件
+
+- `vulnStatus` ホワイトリスト (`Public` / `Modified` / `Analyzed`) — `Awaiting Analysis` は除外
+- CWE allow-list 外の CVE は VariantRule を生成しない
+- 生成 regex は `Severity = MEDIUM` 既定 (Compass で再検証してから Herald へ)
+- 削除行 (脆弱コード) は **完全コピーで保存せず regex 化のみ**、追加行 (mitigation) は `must_not_contain` に転写
+
+詳細仕様: [`SPEC-phase2-lineage.md`](./SPEC-phase2-lineage.md)
+
 ## モジュール別リファレンス
 
 ### Sentinel

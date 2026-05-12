@@ -55,13 +55,18 @@ GGUF 化して Ollama に登録するためのラッパー一式:
 
 詳細: [`SPEC-phase2-reader-finetune.md`](./SPEC-phase2-reader-finetune.md)
 
-### ④ Lineage (継) — Variant Analysis
+### ④ Lineage (継) — Variant Analysis ✅ Phase 2-C 完了
 
 公開 CVE の修正コミット diff から類似パターンを検索:
 
-- `lineage cve-import <id>` で NVD JSON を取り込み
-- 修正前 AST 形を Semgrep autofix pattern に変換
-- Sentinel 出力済みのリポジトリ集合に対して横展開検索
+- ✅ `suzaku lineage ingest` で NVD JSON を取り込み (オンライン/オフライン両対応)
+- ✅ `extract` で commit 修正 diff から regex ベースの VariantRule を生成
+- ✅ `scan` で対象リポジトリに対し横展開検索 (Compass GrepRunner を流用)
+- ✅ Witness Guard とは独立した read-only egress allow-list
+  (`api.github.com`, `services.nvd.nist.gov` のみ)
+- ✅ `Awaiting Analysis` 等の未確定 CVE は機械的に除外
+
+詳細: [`SPEC-phase2-lineage.md`](./SPEC-phase2-lineage.md)
 
 ### Herald — 追加申請ルート ✅ (Phase 2-D 完了)
 

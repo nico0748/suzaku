@@ -14,6 +14,7 @@ from suzaku import __version__
 from suzaku.chronicle.cli import app as chronicle_app
 from suzaku.compass.cli import app as compass_app
 from suzaku.herald.cli import app as herald_app
+from suzaku.lineage.cli import app as lineage_app
 from suzaku.mcp.cli import app as mcp_app
 from suzaku.reader.cli import app as reader_app
 from suzaku.sentinel.cli import app as sentinel_app
@@ -35,6 +36,7 @@ app.add_typer(witness_app, name="witness")
 app.add_typer(herald_app, name="herald")
 app.add_typer(chronicle_app, name="chronicle")
 app.add_typer(reader_app, name="reader")
+app.add_typer(lineage_app, name="lineage")
 app.add_typer(mcp_app, name="mcp")
 
 
