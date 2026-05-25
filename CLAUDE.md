@@ -12,12 +12,17 @@ OSS脆弱性発見〜CVE取得までを支援する個人向けワークフロ�
 5. 全実行ログに SHA-256 を付与し append-only で保存。
 
 ## Tech Stack
-Python 3.11+, Typer, Pydantic v2, Semgrep, ripgrep, Docker.
-禁止: Webフレームワーク, ORM, Celery, Redis.
+- Phase 1〜2 (CLI / MCP): Python 3.11+, Typer, Pydantic v2, Semgrep, ripgrep, Docker
+- Phase 3 (Web UI): FastAPI (バックエンド) + React 18 + Vite + TypeScript + shadcn/ui (フロント)
+- 禁止: ORM, Celery, Redis, 重量フレームワーク (Django 等)
+- Phase 3 で FastAPI を解禁するが、永続化は引き続き JSON ファイル + SHA-256 チェイン (DB は導入しない)
 
 ## Architecture
-5 modules in Phase 1: Sentinel, Compass, Witness, Herald, Chronicle.
-各モジュールは独立しつつ models.py 経由でデータ受け渡し。
+- Phase 1 MVP: Sentinel / Compass / Witness / Herald / Chronicle (5 モジュール)
+- Phase 2: Reader / Lineage / MCP server を追加
+- Phase 3: Web UI (`src/suzaku/web/` + `web/` フロント) — 既存の pure functions を直接呼び、CLI / MCP と並列の UI 層
+- 各モジュールは独立しつつ models.py 経由でデータ受け渡し
+- すべての UI 層 (CLI / MCP / Web) で同一の Guard (Witness / ACCS / Extortion) が発火する
 
 ## Coding Conventions
 - ruff (formatter + linter)

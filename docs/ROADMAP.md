@@ -104,10 +104,20 @@ GGUF 化して Ollama に登録するためのラッパー一式:
 - 詳細仕様: [`SPEC-phase2-mcp.md`](./SPEC-phase2-mcp.md)
 - Phase 3 候補: SSE / streamable HTTP, `chronicle_publish`, `sentinel_scan` の安全な公開
 
-### TUI / Web ダッシュボード
+### Web UI (Phase 3-A) — 進行中
 
-- Phase 1 で禁止した Web フレームワークを Phase 3 で限定的に解禁 (read-only)
-- Textual TUI で disclosure pipeline の進捗を可視化
+CLI / MCP に並ぶ第3の UI 層として、FastAPI バックエンド + React フロントを追加する。
+
+- バックエンド: `src/suzaku/web/` (FastAPI、127.0.0.1 バインド、認証なし、Origin/CSRF のみ)
+- フロント: `web/` (Vite + React 18 + TypeScript + shadcn/ui + TanStack Query)
+- v1 スコープ (読み取り系 4 モジュール): Sentinel scan / Compass scan / Lineage ingest+extract+scan / Chronicle status
+- 既存 pure functions を直接呼ぶ — Witness Guard / ACCS Guard / Extortion Guard は自動継承
+- 永続化は引き続き JSON ファイル + SHA-256 チェイン (DB は導入しない)
+- 仕様: [`SPEC-phase3-web-ui.md`](./SPEC-phase3-web-ui.md)
+
+### TUI ダッシュボード (Phase 3-B 候補)
+
+- Textual TUI で disclosure pipeline の進捗を可視化 (Web UI と択一ではなく並列)
 
 ## アーキテクチャ拡張のガードレール
 

@@ -60,7 +60,17 @@ suzaku --help
 
 - Probe (ファジング) — Phase 3
 - 申請 API への自動 POST (テンプレ生成のみ。手動投稿が前提)
-- Web UI、ORM、Web フレームワーク
+- Web UI — **Phase 3 で解禁** (下記参照)
+- ORM / Redis / Celery — 引き続き不採用
+
+## Phase 3: Web UI (進行中)
+
+CLI / MCP に並ぶ第3の UI 層として、FastAPI バックエンド + React フロントで読み取り系 4 モジュール (Sentinel / Compass / Lineage / Chronicle) を GUI 化する。
+
+- デフォルト `127.0.0.1` バインド・認証なし (個人ローカル利用前提)
+- 既存の pure functions を直接呼び、Witness Guard / ACCS Guard / Extortion Guard を継承
+- 永続化は引き続き JSON ファイル + SHA-256 チェイン (DB は導入しない)
+- 仕様: [`docs/SPEC-phase3-web-ui.md`](./docs/SPEC-phase3-web-ui.md)
 
 ## License
 
