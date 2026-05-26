@@ -18,6 +18,7 @@ from suzaku.lineage.cli import app as lineage_app
 from suzaku.mcp.cli import app as mcp_app
 from suzaku.reader.cli import app as reader_app
 from suzaku.sentinel.cli import app as sentinel_app
+from suzaku.web.cli import app as web_app
 from suzaku.witness.cli import app as witness_app
 
 SUZAKU_RED = "#B43E3E"
@@ -38,6 +39,7 @@ app.add_typer(chronicle_app, name="chronicle")
 app.add_typer(reader_app, name="reader")
 app.add_typer(lineage_app, name="lineage")
 app.add_typer(mcp_app, name="mcp")
+app.add_typer(web_app, name="web")
 
 
 @app.command()
