@@ -43,6 +43,12 @@ pocs/
 evidence/
 .suzaku/
 
+# Node / Vite (web/)
+node_modules/
+web/dist/
+web/.vite/
+*.tsbuildinfo
+
 # OS
 .DS_Store
 Thumbs.db
