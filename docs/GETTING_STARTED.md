@@ -342,6 +342,26 @@ Claude Desktop の `claude_desktop_config.json`:
 
 ---
 
+## 4.5. Web UI を起動する (Phase 3-A、進行中)
+
+ブラウザでも操作したい場合は FastAPI + React の Web UI を立ち上げる:
+
+```bash
+# Terminal 1 — FastAPI バックエンド (127.0.0.1:8765)
+suzaku web serve
+
+# Terminal 2 — Vite dev server (127.0.0.1:5173, /api/* を 8765 へ proxy)
+cd web
+npm install     # 初回のみ
+npm run dev
+```
+
+ブラウザで `http://127.0.0.1:5173/` を開く。現状 (Phase 3-A PR #4 時点) は Dashboard のみ機能し、Sentinel / Compass / Lineage / Chronicle 各ページは "Coming soon" のスタブ。後続 PR で順次実装する。
+
+API スキーマは `http://127.0.0.1:8765/docs` (Swagger UI) で確認できる。
+
+---
+
 ## 7. 次のステップ
 
 - **詳細仕様**: `docs/SPEC*.md` (Phase 1 + Phase 2-A/B/C/D)
